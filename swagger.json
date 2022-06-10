@@ -1,0 +1,963 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "CompanyZ Backend \n\nMade with ❤️ by Gasaro Leila",
+        "version": "1.0.0",
+        "title": "Company Z Backend",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Gasaro Leila",
+            "email": "uwamgaleila@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "tags": [
+        {
+            "name": "USER OPERATIONS",
+            "description": "Operations on user management and profile"
+        }
+    ],
+    "paths":{
+        
+        "/user/profile": {
+            "get": {
+                "tags": [
+                    "USER OPERATIONS"
+                ],
+                "summary": "Get user profile information",
+                "description": "Get user profile information",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"header",
+                        "name":"Authorization",
+                        "description":"JWT Token of the user",
+                        "type":"string",
+                        "required":"true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "tags": [
+                    "USER OPERATIONS"
+                ],
+                "summary": "Register a user",
+                "description": "Register a user",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"formData",
+                        "name":"names",
+                        "description":"Names of the user",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    
+                    {
+                        "in":"formData",
+                        "name":"gender",
+                        "description":"Gender of the ser",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"email",
+                        "description":"Email of the user",
+                        "type":"string",
+                        "required":"true"
+                    },
+
+                    {
+                        "in":"formData",
+                        "name":"age",
+                        "description":"Age of the user",
+                        "type":"number",
+                        "required":"true"
+                    },
+
+                    {
+                        "in":"formData",
+                        "name":"dob",
+                        "description":"Age of the user",
+                        "type":"number",
+                        "required":"true"
+                    },
+
+                    {
+                        "in":"formData",
+                        "name":"maritialStatus",
+                        "description":"Maritial Status of the user",
+                        "type":"number",
+                        "required":"true"
+                    },
+
+                    {
+                        "in":"formData",
+                        "name":"profile",
+                        "description":"profile picture",
+                        "type":"file",
+                        "required":"true"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"Password",
+                        "description":"Password of the user",
+                        "type":"string",
+                        "required":"true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        
+        "/login": {
+            "post": {
+                "tags": [
+                    "USER OPERATIONS"
+                ],
+                "summary": "login to your account",
+                "description": "login to your account",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"formData",
+                        "name":"email",
+                        "description":"Email of the user",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"password",
+                        "description":"Password of the user",
+                        "type":"string",
+                        "required":"true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/verifyEmail": {
+            "patch": {
+                "tags": [
+                    "USER OPERATIONS"
+                ],
+                "summary": "verify your email",
+                "description": "verify your email",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"formData",
+                        "name":"code",
+                        "description":"Verification code sent to you via email",
+                        "type":"string",
+                        "required":"true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/forgotPassword/sendResetCode": {
+            "post": {
+                "tags": [
+                    "USER OPERATIONS"
+                ],
+                "summary": "Get your password reset code",
+                "description": "Get your password reset code",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"formData",
+                        "name":"Email",
+                        "description":"Email of the user",
+                        "type":"string",
+                        "required":"true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/forgotPassword/checkCode/{userId}/{code}": {
+            "get": {
+                "tags": [
+                    "USER OPERATIONS"
+                ],
+                "summary": "Check password reset code",
+                "description": "Check password reset code",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"path",
+                        "name":"userId",
+                        "description":"Id of the user",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"path",
+                        "name":"code",
+                        "description":"Code sent to the user",
+                        "type":"string",
+                        "required":"true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/resetPassword/{userId}": {
+            "patch": {
+                "tags": [
+                    "USER OPERATIONS"
+                ],
+                "summary": "Reset your password",
+                "description": "Reset your password",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"path",
+                        "name":"userId",
+                        "description":"Id of the user",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"newPassword",
+                        "description":"New password of the user",
+                        "type":"string",
+                        "required":"true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/user/profile/update": {
+            "put": {
+                "tags": [
+                    "USER OPERATIONS"
+                ],
+                "summary": "Update profile information",
+                "description": "Update profile information",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"header",
+                        "name":"Authorization",
+                        "description":"JWT token of the user",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"Firstname",
+                        "description":"Firstname of the user",
+                        "type":"string"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"Lastname",
+                        "description":"Lastname of the user",
+                        "type":"string"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"Address",
+                        "description":"Address of the user",
+                        "type":"string"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"Phone",
+                        "description":"Phone number of the user",
+                        "type":"string"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"profilePicture",
+                        "description":"Profile Picture of the user",
+                        "type":"file"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/user/profile/changePassword": {
+            "patch": {
+                "tags": [
+                    "USER OPERATIONS"
+                ],
+                "summary": "Change your password",
+                "description": "Change your password",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"header",
+                        "name":"Authorization",
+                        "description":"JWT token of the user",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"oldPassword",
+                        "description":"Old password of the user",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"newPassword",
+                        "description":"New password of the user",
+                        "type":"string",
+                        "required":"true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/user/profile/delete": {
+            "delete": {
+                "tags": [
+                    "USER OPERATIONS"
+                ],
+                "summary": "Delete your profile",
+                "description": "Delete your profile",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"header",
+                        "name":"Authorization",
+                        "description":"JWT token of the user",
+                        "type":"string",
+                        "required":"true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/tenants/requests": {
+            "get": {
+                "tags": [
+                    "TENANT OPERATIONS"
+                ],
+                "summary": "Get the requests from tenants",
+                "description": "Get the requests from tenants",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"header",
+                        "name":"Authorization",
+                        "description":"Jwt token of the user",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"query",
+                        "name":"status",
+                        "description":"Status of the request",
+                        "type":"string",
+                        "enum":["Approved","Cancelled","Pending"]
+                    },
+                    {
+                        "in":"query",
+                        "name":"propertyId",
+                        "description":"Id of the property",
+                        "type":"string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/properties/{propertyId}/tenant/request": {
+            "post": {
+                "tags": [
+                    "TENANT OPERATIONS"
+                ],
+                "summary": "Create a tenant request to a property",
+                "description": "Create a tenant request to a property",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"header",
+                        "name":"Authorization",
+                        "description":"Jwt token of the tenant",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"path",
+                        "name":"propertyId",
+                        "description":"Id of the property",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"toBeRentedUntil",
+                        "description":"Date when the user wishes to rent it until",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"suggestedAmount",
+                        "description":"Suggested amount to pay monthly",
+                        "type":"string"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"Description",
+                        "description":"Additional description on the request",
+                        "type":"string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/tenants/requests/{requestId}/update": {
+            "patch": {
+                "tags": [
+                    "TENANT OPERATIONS"
+                ],
+                "summary": "Update the status of a tenant request",
+                "description": "Update the status of a tenant request",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"header",
+                        "name":"Authorization",
+                        "description":"Jwt token of the user",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"path",
+                        "name":"requestId",
+                        "description":"Id of the property tenant request",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"Status",
+                        "description":"Status of the request",
+                        "type":"string",
+                        "enum":["Approved","Cancelled"],
+                        "required":"true"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"rentAmount",
+                        "description":"Amount of rent",
+                        "type":"string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/transactions": {
+            "get": {
+                "tags": [
+                    "USER OPERATIONS"
+                ],
+                "summary": "Get transactions that occured on the account of the logged in property owner",
+                "description": "Get transactions that occured on the account of the logged in property owner",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"header",
+                        "name":"Authorization",
+                        "description":"Jwt token of the user",
+                        "type":"string",
+                        "required":"true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/user/notifications": {
+            "get": {
+                "tags": [
+                    "NOTIFICATIONS MODULE"
+                ],
+                "summary": "Get notifications of a logged in user",
+                "description": "Get notifications of a logged in user",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"header",
+                        "name":"Authorization",
+                        "description":"Jwt token of the user",
+                        "type":"string",
+                        "required":"true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/notifications/{notificationId}/read": {
+            "patch": {
+                "tags": [
+                    "NOTIFICATIONS MODULE"
+                ],
+                "summary": "Read a notification",
+                "description": "Read a notification",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"header",
+                        "name":"Authorization",
+                        "description":"Jwt token of the user",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"path",
+                        "name":"notificationId",
+                        "description":"Id of the notification",
+                        "type":"string",
+                        "required":"true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/notifications/readAll": {
+            "patch": {
+                "tags": [
+                    "NOTIFICATIONS MODULE"
+                ],
+                "summary": "Read all notifications",
+                "description": "Read all notifications",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"header",
+                        "name":"Authorization",
+                        "description":"Jwt token of the user",
+                        "type":"string",
+                        "required":"true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/notifications/{notificationId}/delete": {
+            "delete": {
+                "tags": [
+                    "NOTIFICATIONS MODULE"
+                ],
+                "summary": "Delete a notification",
+                "description": "Delete a notification",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"header",
+                        "name":"Authorization",
+                        "description":"Jwt token of the user",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"path",
+                        "name":"notificationId",
+                        "description":"Id of the notification",
+                        "type":"string",
+                        "required":"true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/properties/{tenantRequestId}/tenant/payment/rent": {
+            "put": {
+                "tags": [
+                    "TENANT OPERATIONS"
+                ],
+                "summary": "Pay rent",
+                "description": "Pay rent",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"header",
+                        "name":"Authorization",
+                        "description":"Jwt token of the user",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"path",
+                        "name":"tenantRequestId",
+                        "description":"Id of the tenant request",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"paymentMethod",
+                        "description":"Payment method",
+                        "type":"string",
+                        "enum":["momo","visa","mastercard"],
+                        "required":"true"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"momoPhoneNumber",
+                        "description":"Phone number of your mobile money",
+                        "type":"string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        }
+    }
+}
