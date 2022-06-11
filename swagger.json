@@ -80,6 +80,7 @@
                         "in":"formData",
                         "name":"gender",
                         "description":"Gender of the ser",
+                        "enum": ["MALE","FEMALE"],
                         "type":"string",
                         "required":"true"
                     },
@@ -111,13 +112,14 @@
                         "in":"formData",
                         "name":"maritialStatus",
                         "description":"Maritial Status of the user",
+                        "enum": ["SINGLE","MARRIED", "DIVORCED","WIDOWED"],
                         "type":"string",
                         "required":"true"
                     },
 
                     {
                         "in":"formData",
-                        "name":"profile",
+                        "name":"profilePicture",
                         "description":"profile picture",
                         "type":"file",
                         "required":"true"
@@ -127,6 +129,15 @@
                         "in":"formData",
                         "name":"nationality",
                         "description":"Nationality",
+                        "type":"string",
+                        "required":"true"
+                    },
+
+                    {
+                        "in":"formData",
+                        "name":"accountType",
+                        "description":"Role of the user",
+                        "enum": ["user","admin"],
                         "type":"string",
                         "required":"true"
                     },

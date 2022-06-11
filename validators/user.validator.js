@@ -14,7 +14,7 @@ export async function validateUserRegistration(req, res, next) {
         //     nationality: Joi.string().required().label('nationality'),
         //     Password: Joi.string().min(8).required().label("password")
         // })
-        
+  
         const schema = Joi.object({
             names: Joi.string().min(5).required(),
             email: Joi.string().min(5).required(),
@@ -23,9 +23,9 @@ export async function validateUserRegistration(req, res, next) {
             dob: Joi.string().required(),
             maritialStatus: Joi.string().required(),
             nationality: Joi.string().required(),
+            accountType: Joi.string().required(),
             password: Joi.string().min(8).required()
         })
-        console.log(req.body)
         const { error } = schema.validate(_.pick(req.body,  [
             "names",
             "email",
@@ -34,7 +34,8 @@ export async function validateUserRegistration(req, res, next) {
             "dob",
             "maritialStatus",
             "password",
-            "nationality"
+            "nationality",
+            "accountType"
         ]));
         if (error) {
             return res.status(400).json({

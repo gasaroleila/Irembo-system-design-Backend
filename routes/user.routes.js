@@ -8,7 +8,8 @@ const upload = uploadFile()
 
 router.get("/user/profile", authenticate, getUserInformation)
 
-router.post("/register", validateUserRegistration, createUser)
+router.post("/register", upload.single("profilePicture"), validateUserRegistration, createUser)
+
 
 router.patch("/verifyEmail", validateUserEmail)
 

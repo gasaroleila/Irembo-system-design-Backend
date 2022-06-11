@@ -36,11 +36,25 @@ export const createUser = async (req, res) => {
         "maritialStatus",
         "profilePicture",
         "password",
+        "accountType",
         "nationality"
       ])
     );
+
+
+    let docInfo = await cloudinary.uploader.upload(req.file.path)
+            let secure_url = docInfo.secure_url
+            let cloudinaryId = docInfo.public_id
+            let profilePicture = {
+                profilePictureUrl: secure_url,
+                profilePictureId: cloudinaryId
+              }
+
+    user.profilePicture = profilePicture.profilePictureUrl
+    user.profilePicture_cloudinary_id = profilePicture.profilePictureId
+    
+    console.log('user',user)
     const time = new Date();
-    user.CreatedAt = time;
     let randomCode = Math.floor(1000 + Math.random() * 9000);
     user.verificationCode = "CZ" + randomCode.toString();
     let checkVerificationCode = await User.findOne({
@@ -70,7 +84,7 @@ export const createUser = async (req, res) => {
             </div>
                 <p style="background-color: #265DE7;width: 100%;margin-top: 1%;color: #fff;text-align: center;font-family: sans-serif;padding:1% 0%;"><span style="font-weight: bold;">Company Z</span>&copy; ${time.getFullYear()}</p>
         </body>`;
-      let checkSendEmail = sendEmail(user.Email, subject, html);
+      let checkSendEmail = sendEmail(user.email, subject, html);
       checkSendEmail
       .then(async(info) => {
         await user.save();
