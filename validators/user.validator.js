@@ -3,20 +3,39 @@ import { User } from "../models/user.model.js";
 import _ from "lodash";
 
 export async function validateUserRegistration(req, res, next) {
-    req.originalUrl == '/tenant/register' ? req.body.AccountType = 'tenant' : req.body.AccountType = 'property-owner'
     try {
-        const schema = Joi.object({
-            Names: Joi.string().min(5).required().label("names"),
-            Email: Joi.string().min(5).required().label("email"),
-            Gender: Joi.string().required().label('gender'),
-            Age: Joi.number().required().label('age'),
-            Dob: Joi.string().required().label('dob'),
-            MaritialStatus: Joi.string().required().label("maritialStatus"),
-            nationality: Joi.string().required().label('nationality'),
-            Password: Joi.string().min(8).required().label("password")
-        })
+        // const schema = Joi.object({
+        //     Names: Joi.string().min(5).required(),
+        //     Email: Joi.string().min(5).required().label("email"),
+        //     Gender: Joi.string().required().label('gender'),
+        //     Age: Joi.number().required().label('age'),
+        //     Dob: Joi.string().required().label('dob'),
+        //     MaritialStatus: Joi.string().required().label("maritialStatus"),
+        //     nationality: Joi.string().required().label('nationality'),
+        //     Password: Joi.string().min(8).required().label("password")
+        // })
         
-        const { error } = schema.validate(req.body);
+        const schema = Joi.object({
+            names: Joi.string().min(5).required(),
+            email: Joi.string().min(5).required(),
+            gender: Joi.string().required(),
+            age: Joi.number().required(),
+            dob: Joi.string().required(),
+            maritialStatus: Joi.string().required(),
+            nationality: Joi.string().required(),
+            password: Joi.string().min(8).required()
+        })
+        console.log(req.body)
+        const { error } = schema.validate(_.pick(req.body,  [
+            "names",
+            "email",
+            "gender",
+            "age",
+            "dob",
+            "maritialStatus",
+            "password",
+            "nationality"
+        ]));
         if (error) {
             return res.status(400).json({
                 error: error.message,
@@ -25,14 +44,6 @@ export async function validateUserRegistration(req, res, next) {
         }
         let checkEmail = await User.findOne({ Email: req.body.Email })
         if (checkEmail) return res.status(400).send("Email is already registered!")
-
-        if ((req.body.Phone).length < 10 || (req.body.Phone).length > 10) return res.status(400).send("Phone Number must be 10 characters!")
-        req.body.Phone = (req.body.Phone).toString()
-        let validRwandanPhoneNumbers = ['078', '079', '072', '073']
-        let first3Characters = (req.body.Phone.toString()).substring(0, 3)
-        if (validRwandanPhoneNumbers.includes(first3Characters) != true) {
-            return res.status(400).send("Phone Number must be a valid Rwandan Phone Number!")
-        }
 
         return next()
     }

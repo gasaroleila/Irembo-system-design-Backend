@@ -103,7 +103,7 @@
                         "in":"formData",
                         "name":"dob",
                         "description":"Age of the user",
-                        "type":"number",
+                        "type":"string",
                         "required":"true"
                     },
 
@@ -111,7 +111,7 @@
                         "in":"formData",
                         "name":"maritialStatus",
                         "description":"Maritial Status of the user",
-                        "type":"number",
+                        "type":"string",
                         "required":"true"
                     },
 
@@ -122,9 +122,17 @@
                         "type":"file",
                         "required":"true"
                     },
+                    
                     {
                         "in":"formData",
-                        "name":"Password",
+                        "name":"nationality",
+                        "description":"Nationality",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"formData",
+                        "name":"password",
                         "description":"Password of the user",
                         "type":"string",
                         "required":"true"

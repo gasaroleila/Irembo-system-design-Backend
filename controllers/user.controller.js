@@ -34,8 +34,9 @@ export const createUser = async (req, res) => {
         "age",
         "dob",
         "maritialStatus",
-        "profile",
-        "password"
+        "profilePicture",
+        "password",
+        "nationality"
       ])
     );
     const time = new Date();
@@ -50,7 +51,7 @@ export const createUser = async (req, res) => {
       user.verificationCode = "CZ" + randomCode.toString();
     }
     const salt = await genSalt(10);
-    user.Password = await hash(user.Password, salt);
+    user.password = await hash(user.password, salt);
 
     try {
       const subject = "Company Z: Verify Your Email";
