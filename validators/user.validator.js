@@ -14,6 +14,8 @@ export async function validateUserRegistration(req, res, next) {
         //     nationality: Joi.string().required().label('nationality'),
         //     Password: Joi.string().min(8).required().label("password")
         // })
+
+        console.log("data",req.body)
   
         const schema = Joi.object({
             names: Joi.string().min(5).required(),
@@ -43,7 +45,7 @@ export async function validateUserRegistration(req, res, next) {
                 message: "Unable to create the account."
             })
         }
-        let checkEmail = await User.findOne({ Email: req.body.Email })
+        let checkEmail = await User.findOne({ email: req.body.email })
         if (checkEmail) return res.status(400).send("Email is already registered!")
 
         return next()
@@ -56,8 +58,8 @@ export async function validateUserRegistration(req, res, next) {
 export async function validateLogin(req, res, next) {
     try {
         const schema = Joi.object({
-            Email: Joi.string().min(5).required().label("Email"),
-            Password: Joi.string().min(5).required().label("Password"),
+            email: Joi.string().min(5).required(),
+            password: Joi.string().min(5).required(),
         })
 
         const { error } = schema.validate(req.body);

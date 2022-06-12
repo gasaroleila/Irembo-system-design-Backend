@@ -81,7 +81,7 @@ const userSchema = new Schema({
 
 userSchema.methods.generateAuthToken = function(){
     const token = sign(
-        {_id:this._id,AccountType: this.accountType},
+        {data:this},
         (process.env.JWT).trim()
     )
     return 'Bearer '+token
