@@ -100,6 +100,12 @@ const userSchema = new Schema({
     requestLogin:{
         type: Boolean,
         default: false
+    },
+
+    status: {
+        type: String,
+        enum: ["UNVERIFIED", "VERIFICATION", "VERIFIED"],
+        default: "UNVERIFIED"
     }
 }, { timestamps: true })
 

@@ -20,7 +20,7 @@ export async function sendEmail(to,subject,html){
                 reject(error)
             }
             else{
-                console.log("Server is ready to take messages")
+                // console.log("Server is ready to take messages")
                 resolve(success)
             }
         })

@@ -172,13 +172,11 @@ export const sendLoginLink = async (req, res) => {
 
       const time = new Date();
       let randomCode = "CZ"+ (Math.floor(1000 + Math.random() * 9000)).toString();
-    // user.verificationCode = "CZ" + randomCode.toString();
     let checkVerificationCode = await User.findOne({
-      verificationCode: user.verificationCode,
+       "loginLink.code": randomCode,
     });
     if (checkVerificationCode) {
       randomCode = "CZ"+(Math.floor(2000 + Math.random() * 80000)).toString();
-      // user.verificationCode = "CZ" + randomCode.toString();
     }
 
     let link = `http://localhost:3000/login/${user._id}/${randomCode}`
@@ -192,7 +190,7 @@ export const sendLoginLink = async (req, res) => {
               </div>
               <div style="width:90%;margin: -2% 2% 2% 4%;box-shadow: 2px 2px 10px rgb(196, 196, 196);background-color: #fff;border-radius: 5px;position: relative;padding-bottom: 4%;">
                   <h1 style="font-family: sans-serif;font-size: 30px;font-weight: bold;text-align: center;color:#265DE7;text-transform: uppercase;padding-top: 2%;">Company Z</h1>
-                  <p style="font-family: sans-serif;font-size: 18px;margin: 2% 1.5%;"><span style="font-weight: bold;">Login to CompanyZ platform with the link.</span> You will find the respective field where you will enter the provided link.</p>
+                  <p style="font-family: sans-serif;font-size: 18px;margin: 2% 1.5%;"><span style="font-weight: bold;">Login to CompanyZ platform with the link.</span> Click on the link!</p>
                   <div style="display: flex;">
                       <a href="${link}">Login</a>
                   </div>
@@ -200,9 +198,7 @@ export const sendLoginLink = async (req, res) => {
                   <p style="background-color: #265DE7;width: 100%;margin-top: 1%;color: #fff;text-align: center;font-family: sans-serif;padding:1% 0%;"><span style="font-weight: bold;">Company Z</span>&copy; ${time.getFullYear()}</p>
           </body>`;
         let checkSendEmail = await sendEmail(user.email, subject, html);
-        console.log('there1', checkSendEmail)
         if (checkSendEmail.accepted[0] === user.email) {
-          console.log('there2')
           await User.findByIdAndUpdate(
             user._id,
             {
@@ -236,10 +232,10 @@ export const sendLoginLink = async (req, res) => {
     res.send({
       status: 200,
       message: "Check your Email for login link",
-      
+      success: true
     });
   } catch (ex) {
-    res.status(400).send(ex.message);
+    res.status(400).send({ success: false, message: ex.message });
   }
 };
 
@@ -332,29 +328,39 @@ export const sendResetLink = async (req, res) => {
         .send({ status: "error",message:"Unable to find the user with the provided email"});
 
     const time = new Date();
+    let randomCode = "CZ"+ (Math.floor(1000 + Math.random() * 9000)).toString();
+    let checkVerificationCode = await User.findOne({
+      "passwordResetLik.code": randomCode,
+    });
+    if (checkVerificationCode) {
+      randomCode = "CZ"+(Math.floor(2000 + Math.random() * 80000)).toString();
+    }
+
     // let resetCode = Math.floor(10000 + Math.random() * 90000);
-    let resetLink = ""
+    let resetLink = `http://localhost:3000/resetPassword/${user._id}/${randomCode}`
+    
     const subject = "Company Z: Reset your password";
     const html = `<body>
-        <div style="background-color: #FFF;width: 100%;height: 120px;">
-            <img src="https://res.cloudinary.com/pacis/image/upload/v1637909575/Component_42_1_agpyhx.png" style="width: 18%;margin-top: 0%;height: 70px;margin-left: 38%;">
+    <div style="background-color: #FFF;width: 100%;height: 120px;">
+        <img src="https://res.cloudinary.com/pacis/image/upload/v1637909575/Component_42_1_agpyhx.png" style="width: 18%;margin-top: 0%;height: 70px;margin-left: 38%;">
+    </div>
+    <div style="width:90%;margin: -2% 2% 2% 4%;box-shadow: 2px 2px 10px rgb(196, 196, 196);background-color: #fff;border-radius: 5px;position: relative;padding-bottom: 4%;">
+        <h1 style="font-family: sans-serif;font-size: 30px;font-weight: bold;text-align: center;color:#265DE7;text-transform: uppercase;padding-top: 2%;">Company Z</h1>
+        <p style="font-family: sans-serif;font-size: 18px;margin: 2% 1.5%;"><span style="font-weight: bold;">Reset Password.</span>Click on the link!</p>
+        <div style="display: flex;">
+            <a href="${resetLink}">Reset Password</a>
         </div>
-        <div style="width:90%;margin: -2% 2% 2% 4%;box-shadow: 2px 2px 10px rgb(196, 196, 196);background-color: #fff;border-radius: 5px;position: relative;padding-bottom: 4%;">
-            <h1 style="font-family: sans-serif;font-size: 30px;font-weight: bold;text-align: center;color: #265DE7;text-transform: uppercase;padding-top: 2%;">Company Z</h1>
-            <p style="font-family: sans-serif;font-size: 18px;margin: 2% 1.5%;"><span style="font-weight: bold;">Reset your password Using the code below.</span> You will find the respective field where you will enter the provided reset link.</p>
-            <div style="display: flex;">
-                <textarea id="code" rows=1 cols=1 readonly style="text-align:center;font-family:sans-serif;font-weight:bold;font-size:20px;padding:0.9% 0% 0.5% !important;background-color: rgba(9, 44, 9, 0.185); width: 20%;margin-left: 45%;resize: none;border:none;">${resetLink}</textarea>
-            </div>
-        </div>
-            <p style="background-color: #265DE7;width: 100%;margin-top: 1%;color: #fff;text-align: center;font-family: sans-serif;padding:1% 0%;"><span style="font-weight: bold;">Tuura RMS </span>&copy; ${time.getFullYear()}</p>
-    </body>`;
+    </div>
+        <p style="background-color: #265DE7;width: 100%;margin-top: 1%;color: #fff;text-align: center;font-family: sans-serif;padding:1% 0%;"><span style="font-weight: bold;">Company Z</span>&copy; ${time.getFullYear()}</p>
+</body>`;
     let checkSendEmail = await sendEmail(user.email, subject, html);
-    if (checkSendEmail == "Success") {
+    if (checkSendEmail.accepted[0] === user.email) {
       await User.findByIdAndUpdate(
         user._id,
         {
           passwordResetLink: {
             link: resetLink,
+            code: randomCode,
             creationTime: time,
           },
           requestPasswordReset: true,
@@ -425,18 +431,57 @@ export const checkCode = async (code, userId) => {
   }
 };
 
-export const resetPassword = async (req, res) => {
+export const checkResetLink = async (req, res) => {
   try {
     let user = await User.findById(req.params.userId);
     if (!user)
       return res
         .status(400)
-        .send("Unable to find the user with the provided userId");
+        .send("Unable to find the user with the provided userId");    
+        if (
+          user.passwordResetLink &&
+          user.passwordResetLink.code != req.params.userCode
+        ) {
+          return res.status(400).send("Invalid Code!");
+        }
+  
+        let time = new Date();
+        let creationTimeInSeconds =
+          user.passwordResetLink.creationTime.getTime() / 1000;
+        let timeInSeconds = time.getTime() / 1000;
+        if (timeInSeconds - creationTimeInSeconds > 1800) {
+          return res
+            .status(400)
+            .send(
+              "Link Expired!"
+            );
+        }
+    
+       user =  await User.findByIdAndUpdate(
+          user._id,
+          {
+            passwordResetLink: {
+              ...user.passwordResetLink,
+              valid: true
+            },
+          },
+          { new: true }
+    );
+    return res.status(200).send("Code is valid");
+    
+  } catch (err) {
+    res.status(500).send(ex.message);
+  }
+}
 
-    if (!user.PasswordResetLink)
+export const resetPassword = async (req, res) => {
+  try {
+    let user = await User.findById(req.params.userId);
+    console.log('resetting password')
+    if (!user.passwordResetLink)
       return res.status(400).send("You don't have a password reset code");
-    // if (!user.PasswordResetLink.valid)
-    //   return res.status(400).send("Invalid password reset code");
+    if (!user.passwordResetLink.valid)
+      return res.status(400).send("Invalid password reset code");
     if (!user.requestPasswordReset)
       return res.status(400).send("You did not request password resetting");
 
@@ -446,8 +491,8 @@ export const resetPassword = async (req, res) => {
     await User.findByIdAndUpdate(
       req.params.userId,
       {
-        Password: newPassword,
-        PasswordResetLink: null,
+        password: newPassword,
+        passwordResetLink: null,
         requestPasswordReset: false,
       },
       { new: true }
@@ -455,11 +500,13 @@ export const resetPassword = async (req, res) => {
 
     res
       .status(200)
-      .send(
-        "Reset Password Successfully!You can now login with your new password"
-      );
+      .send({
+        status: 200,
+        success: true,
+        message: "Reset Password Successfully!"
+      });
   } catch (ex) {
-    res.status(400).send(ex.message);
+    res.status(500).send(ex.message);
   }
 };
 
@@ -478,10 +525,31 @@ export const updateUserInformation = async (req, res) => {
        },
       { new: true }
     );
+    return res.status(200).send({
+      success: true,
+      message: "Added your Info"
+    })
   } catch (ex) {
-    res.status(500).send(ex.message);
+    res.status(500).send({ success: false, message: ex.message });
   }
 };
+
+export const verifyAccount = async (req, res) => {
+  try {
+    let user = await User.findByIdAndUpdate(
+      req.params.userId,
+      {
+        status: "VERIFIED"
+      },
+      { new: true }
+    );
+
+
+    return res.status(200).send({success: true, message: "Account Verified Successfully!", data: user})
+  } catch (err) {
+    res.status(500).send({ success: false, message: err.message})
+  }
+}
 
 export const changePassword = async (req, res) => {
   try {
