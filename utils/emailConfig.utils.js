@@ -33,7 +33,7 @@ export async function sendEmail(to,subject,html){
         html: html
     }
 
-    await new Promise((resolve, reject) => {
+    let res = await new Promise((resolve, reject) => {
         //send mail
         transporter.sendMail(mailOptions, (err, info) => {
             if (err) {
@@ -45,4 +45,6 @@ export async function sendEmail(to,subject,html){
             }
         })
     })
+
+    return res;
 }

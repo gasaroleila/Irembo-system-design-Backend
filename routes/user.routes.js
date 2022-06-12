@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import { changePassword, checkCode, createUser, deleteAccount, getUserInformation, login, resetPassword, sendResetCode, updateUserInformation, uploadFiles, validateUserEmail } from '../controllers/user.controller.js'
+import { changePassword, checkCode, createUser, deleteAccount, getUserInformation,loginWithLink, resetPassword,sendLoginLink,sendResetLink, updateUserInformation, uploadFiles, validateUserEmail } from '../controllers/user.controller.js'
 import authenticate from '../middlewares/auth.middleware.js';
 import { validateLogin, validatePasswordReset, validateProfileUpdate, validateUserRegistration } from '../validators/user.validator.js';
 import { uploadFile } from "../utils/fileUpload.utils.js";
@@ -10,19 +10,18 @@ router.get("/user/profile", authenticate, getUserInformation)
 
 router.post("/register", upload.single("profilePicture"), validateUserRegistration, createUser)
 
-router.get("/uploadProfile",uploadFiles)
-
+router.patch("/updateInfo/:userId",upload.single("documentImage"), updateUserInformation)
 
 
 router.patch("/verifyEmail", validateUserEmail)
 
-router.post("/login", validateLogin, login)
+router.post("/sendLoginLink", validateLogin, sendLoginLink)
+router.post("/login/:userId/:userCode", loginWithLink)
 
-router.post("/forgotPassword/sendResetCode", sendResetCode)
+router.post("/forgotPassword/sendResetLink", sendResetLink)
+router.patch("/resetPassword/:userId", validatePasswordReset, resetPassword)
 
-router.get("/forgotPassword/checkCode/:userId/:code", checkCode)
-
-router.patch("/resetPassword/:userId", validatePasswordReset, checkCode, resetPassword)
+// router.get("/forgotPassword/checkCode/:userId/:code", checkCode)
 
 router.patch("/user/profile/changePassword", authenticate, changePassword)
 
