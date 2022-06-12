@@ -5,23 +5,23 @@ import jsonwebtoken from 'jsonwebtoken'
 const {sign} = jsonwebtoken
 
 const userSchema = new Schema({
-    Names:{
+    names:{
         type:String,
         minLength:5,
         required:true
     },
 
-    Email:{
+    email:{
         type:String,
         required:true
     },
     
-    Gender:{
+    gender:{
         type: String,
         enum:['MALE','FEMALE'],
         required: true
     },
-    Age:{
+    age:{
         type:Number,
         required:true
     },
@@ -29,12 +29,12 @@ const userSchema = new Schema({
         type: Date,
         required:true
     },
-    MaritialStatus:{
+    maritialStatus:{
         type: String,
         enum:['SINGLE','DIVORCED','MARRIED','WIDOWED'],
         required: true
     },
-    Nationality: {
+    nationality: {
         type: String,
         required: true
     },
@@ -43,26 +43,23 @@ const userSchema = new Schema({
         type:String,
         default:'https://res.cloudinary.com/code-ama/image/upload/v1631563998/defaultProfile_tslvta.jpg'
     },
-  
-    Password:{
+
+    password:{
         type:String,
         minLength:6,
         required:true
     },
-   
+
     profilePicture_cloudinary_id: {
         type: String,
         default: ""
     },
-    AccountType:{
+    accountType:{
         type:String,
         enum:['user', 'admin'],
         required: true
     },
-    LastLoggedIn:{
-        type: Date,
-        default: null
-    },
+   
     verificationCode:{
         type:String,
         unique: true,
@@ -79,16 +76,12 @@ const userSchema = new Schema({
     requestPasswordReset:{
         type: Boolean,
         default: false
-    },
-    CreatedAt:{
-        type:Date,
-        default:null
     }
-})
+}, { timestamps: true })
 
 userSchema.methods.generateAuthToken = function(){
     const token = sign(
-        {_id:this._id,AccountType: this.AccountType},
+        {data:this},
         (process.env.JWT).trim()
     )
     return 'Bearer '+token

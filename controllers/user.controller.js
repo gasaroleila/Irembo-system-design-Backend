@@ -7,6 +7,22 @@ import bcrypt from "bcrypt";
 const { compare } = bcrypt;
 import cloudinary from "../utils/cloudinary.js";
 
+export const uploadFiles = async (req,res) => {
+  let docInfo = await cloudinary.uploader.upload(req.file.path)
+            let secure_url = docInfo.secure_url
+            let cloudinaryId = docInfo.public_id
+            
+  try {
+      let result = await User.findByIdAndUpdate(req.params.id, {
+        profilePicture: secure_url,
+        profilePicture_cloudinary_id: cloudinaryId
+      })
+      if(result) return res.json({message: "successfully uploaded the files", status: 200})
+  } catch (error) {
+      return res.json({message: "failed to upload property files", status: 500})
+  }
+}
+
 
 export const getUserInformation = async (req, res) => {
   try {
@@ -34,12 +50,28 @@ export const createUser = async (req, res) => {
         "age",
         "dob",
         "maritialStatus",
-        "profile",
-        "password"
+        "profilePicture",
+        "password",
+        "accountType",
+        "nationality"
       ])
     );
+
+
+
+    let docInfo = await cloudinary.uploader.upload(req.file.path)
+            let secure_url = docInfo.secure_url
+            let cloudinaryId = docInfo.public_id
+            let profilePicture = {
+                profilePictureUrl: secure_url,
+                profilePictureId: cloudinaryId
+              }
+
+    user.profilePicture = profilePicture.profilePictureUrl
+    user.profilePicture_cloudinary_id = profilePicture.profilePictureId
+    
+    console.log('user',user)
     const time = new Date();
-    user.CreatedAt = time;
     let randomCode = Math.floor(1000 + Math.random() * 9000);
     user.verificationCode = "CZ" + randomCode.toString();
     let checkVerificationCode = await User.findOne({
@@ -50,7 +82,7 @@ export const createUser = async (req, res) => {
       user.verificationCode = "CZ" + randomCode.toString();
     }
     const salt = await genSalt(10);
-    user.Password = await hash(user.Password, salt);
+    user.password = await hash(user.password, salt);
 
     try {
       const subject = "Company Z: Verify Your Email";
@@ -69,11 +101,12 @@ export const createUser = async (req, res) => {
             </div>
                 <p style="background-color: #265DE7;width: 100%;margin-top: 1%;color: #fff;text-align: center;font-family: sans-serif;padding:1% 0%;"><span style="font-weight: bold;">Company Z</span>&copy; ${time.getFullYear()}</p>
         </body>`;
-      let checkSendEmail = sendEmail(user.Email, subject, html);
+      let checkSendEmail = sendEmail(user.email, subject, html);
       checkSendEmail
       .then(async(info) => {
         await user.save();
         return res.status(201).send({
+          success: true,
           message:
             "Registered successfully. Check your email to complete email verification",
         });
@@ -110,9 +143,10 @@ export const validateUserEmail = async (req, res) => {
     );
     res
       .status(200)
-      .send(
-        "Email verification completed successfully. You can now login to your account!"
-      );
+      .send({
+        status: "success",
+        message: "Email verification completed successfully. You can now login to your account!",
+      });
   } catch (ex) {
     res.status(400).send(ex.message);
   }
@@ -120,22 +154,25 @@ export const validateUserEmail = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    let user = await User.findOne({ Email: req.body.email });
+    let user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(400).send("Invalid Email or Password!");
+
+    const token = user.generateAuthToken();
+
     
     if (!user.isVerified) {
       return res
         .status(400)
-        .send(
-          "You must first confirm your email. Check your inbox for confirmation code!"
-        );
+        .send({
+          message: "You must first confirm your email. Check your inbox for confirmation code!",
+          status: "error"
+        });
     }
 
-    const validPassword = await compare(req.body.password, user.Password);
+    const validPassword = await compare(req.body.password, user.password);
     if (!validPassword)
       return res.status(400).send("Invalid Email or Password!");
 
-    const token = user.generateAuthToken();
     let time = new Date()
     user.LastLoggedIn = time
     await user.save()
@@ -153,13 +190,13 @@ export const login = async (req, res) => {
 
 export const sendResetCode = async (req, res) => {
   try {
-    if (!req.body.Email) return res.status(400).send("Email is required");
+    if (!req.body.email) return res.status(400).send("Email is required");
 
-    let user = await User.findOne({ Email: req.body.Email });
+    let user = await User.findOne({ email: req.body.email });
     if (!user)
       return res
         .status(400)
-        .send("Unable to find the user with the provided email");
+        .send({ status: "error",message:"Unable to find the user with the provided email"});
 
     const time = new Date();
     let resetCode = Math.floor(10000 + Math.random() * 90000);
@@ -178,7 +215,7 @@ export const sendResetCode = async (req, res) => {
         </div>
             <p style="background-color: #265DE7;width: 100%;margin-top: 1%;color: #fff;text-align: center;font-family: sans-serif;padding:1% 0%;"><span style="font-weight: bold;">Tuura RMS </span>&copy; ${time.getFullYear()}</p>
     </body>`;
-    let checkSendEmail = await sendEmail(user.Email, subject, html);
+    let checkSendEmail = await sendEmail(user.email, subject, html);
     if (checkSendEmail == "Success") {
       await User.findByIdAndUpdate(
         user._id,
@@ -192,16 +229,18 @@ export const sendResetCode = async (req, res) => {
         { new: true }
       );
       return res.status(200).send({
-        message: `Sent the password reset code to ${user.Email}`,
+        message: `Sent the password reset code to ${user.email}`,
         data: {
           message:
             "Copy this userId as it'll be used in the next step of resetting password",
+          status: "success",
           userId: user._id.toString(),
         },
       });
     } else {
       return res.status(400).send({
         message: "Unable to send the email for password reset",
+        status: "error"
       });
     }
   } catch (ex) {
