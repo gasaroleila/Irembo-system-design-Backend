@@ -80,7 +80,8 @@ export async function validateLogin(req, res, next) {
 export async function validatePasswordReset(req, res, next) {
     try {
         const schema = Joi.object({
-            newPassword: Joi.string().min(6).required()
+            confirmPassword: Joi.string(),
+            newPassword: Joi.string().min(8).required()
         })
         const { error } = schema.validate(req.body);
 

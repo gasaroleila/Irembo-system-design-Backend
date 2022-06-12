@@ -214,6 +214,51 @@
                 }
             }
         },
+        "/login/{userId}/{code}": {
+            "post": {
+                "tags": [
+                    "USER OPERATIONS"
+                ],
+                "summary": "login With link to your account",
+                "description": "login With to your account",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters":[
+                    {
+                        "in":"path",
+                        "name":"userId",
+                        "description":"Id of the user",
+                        "type":"string",
+                        "required":"true"
+                    },
+                    {
+                        "in":"path",
+                        "name":"code",
+                        "description":"Login code",
+                        "type":"string",
+                        "required":"true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
         "/verifyEmail": {
             "patch": {
                 "tags": [
@@ -252,7 +297,7 @@
                 }
             }
         },
-        "/forgotPassword/sendResetCode": {
+        "/forgotPassword/sendResetLink": {
             "post": {
                 "tags": [
                     "USER OPERATIONS"
@@ -380,7 +425,7 @@
                 }
             }
         },
-        "/user/profile/update": {
+        "/updateInfo": {
             "put": {
                 "tags": [
                     "USER OPERATIONS"
@@ -395,42 +440,34 @@
                 ],
                 "parameters":[
                     {
-                        "in":"header",
-                        "name":"Authorization",
-                        "description":"JWT token of the user",
+                        "in":"userId",
+                        "name":"params",
+                        "description":"Id of the user",
                         "type":"string",
                         "required":"true"
                     },
+
                     {
                         "in":"formData",
-                        "name":"Firstname",
-                        "description":"Firstname of the user",
+                        "name":"doumentImage",
+                        "description":"Image of document",
+                        "type":"file",
+                        "required":"true"
+                    },
+                    
+                    {
+                        "in":"formData",
+                        "name":"NID",
+                        "description":"NID of the user",
                         "type":"string"
                     },
                     {
                         "in":"formData",
-                        "name":"Lastname",
-                        "description":"Lastname of the user",
+                        "name":"passportNumber",
+                        "description":"Passport Number of the user",
                         "type":"string"
-                    },
-                    {
-                        "in":"formData",
-                        "name":"Address",
-                        "description":"Address of the user",
-                        "type":"string"
-                    },
-                    {
-                        "in":"formData",
-                        "name":"Phone",
-                        "description":"Phone number of the user",
-                        "type":"string"
-                    },
-                    {
-                        "in":"formData",
-                        "name":"profilePicture",
-                        "description":"Profile Picture of the user",
-                        "type":"file"
                     }
+                    
                 ],
                 "responses": {
                     "200": {

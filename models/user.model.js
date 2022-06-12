@@ -39,6 +39,22 @@ const userSchema = new Schema({
         required: true
     },
 
+    documentNumber: {
+        type: String,
+        default: "",
+        required: false
+    },
+
+    documentImage: {
+        type: String,
+        default: "",
+    },
+
+    documentImage_cloudinary_id: {
+        type: String,
+        default: ""
+    },
+
     profilePicture:{
         type:String,
         default:'https://res.cloudinary.com/code-ama/image/upload/v1631563998/defaultProfile_tslvta.jpg'
@@ -69,13 +85,27 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
-    passwordResetCode:{
+    passwordResetLink:{
         type: Object,
         default: null
     },
     requestPasswordReset:{
         type: Boolean,
         default: false
+    },
+    loginLink:{
+        type: Object,
+        default: null
+    },
+    requestLogin:{
+        type: Boolean,
+        default: false
+    },
+
+    status: {
+        type: String,
+        enum: ["UNVERIFIED", "VERIFICATION", "VERIFIED"],
+        default: "UNVERIFIED"
     }
 }, { timestamps: true })
 
