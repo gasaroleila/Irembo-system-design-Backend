@@ -6,7 +6,7 @@ import { validateLogin, validatePasswordReset, validateProfileUpdate, validateUs
 import { uploadFile } from "../utils/fileUpload.utils.js";
 const upload = uploadFile()
 
-router.get("/user/profile", getUser)
+router.get("/user/profile/:userId", getUser)
 router.get("/checkCanReset/:userId", checkCanReset)
 
 router.post("/register", upload.single("profilePicture"), validateUserRegistration, createUser)

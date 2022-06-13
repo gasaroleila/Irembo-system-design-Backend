@@ -26,9 +26,9 @@ export const uploadFiles = async (req,res) => {
 
 export const getUser = async (req, res) => {
   try {
-    let user = await User.findById(req.params._id)
+    let user = await User.findById(req.params.userId)
     if (!user) return res.status(404).send("User not found!");
-    return res.send({
+    return res.status(200).send({
       status: 200,
       message: "ok",
       data: user,
