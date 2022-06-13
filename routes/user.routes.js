@@ -29,3 +29,4 @@ router.patch("/resetPassword/:userId", validatePasswordReset, resetPassword)
 router.patch("/user/profile/changePassword", authenticate, changePassword)
 
 export default router;
+
