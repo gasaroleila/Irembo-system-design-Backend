@@ -88,7 +88,6 @@ export const createUser = async (req, res) => {
       const subject = "Company Z: Verify Your Email";
       const html = `<body>
             <div style="background-color: #FFF;width: 100%;height: 120px;">
-                <img src="https://res.cloudinary.com/pacis/image/upload/v1637909575/Component_42_1_agpyhx.png" style="width: 18%;margin-top: 0%;height: 70px;margin-left: 38%;">
             </div>
             <div style="width:90%;margin: -2% 2% 2% 4%;box-shadow: 2px 2px 10px rgb(196, 196, 196);background-color: #fff;border-radius: 5px;position: relative;padding-bottom: 4%;">
                 <h1 style="font-family: sans-serif;font-size: 30px;font-weight: bold;text-align: center;color:#265DE7;text-transform: uppercase;padding-top: 2%;">Company Z</h1>
@@ -186,7 +185,6 @@ export const sendLoginLink = async (req, res) => {
         const subject = "Company Z: Login Link";
         const html = `<body>
               <div style="background-color: #FFF;width: 100%;height: 120px;">
-                  <img src="https://res.cloudinary.com/pacis/image/upload/v1637909575/Component_42_1_agpyhx.png" style="width: 18%;margin-top: 0%;height: 70px;margin-left: 38%;">
               </div>
               <div style="width:90%;margin: -2% 2% 2% 4%;box-shadow: 2px 2px 10px rgb(196, 196, 196);background-color: #fff;border-radius: 5px;position: relative;padding-bottom: 4%;">
                   <h1 style="font-family: sans-serif;font-size: 30px;font-weight: bold;text-align: center;color:#265DE7;text-transform: uppercase;padding-top: 2%;">Company Z</h1>
@@ -342,7 +340,6 @@ export const sendResetLink = async (req, res) => {
     const subject = "Company Z: Reset your password";
     const html = `<body>
     <div style="background-color: #FFF;width: 100%;height: 120px;">
-        <img src="https://res.cloudinary.com/pacis/image/upload/v1637909575/Component_42_1_agpyhx.png" style="width: 18%;margin-top: 0%;height: 70px;margin-left: 38%;">
     </div>
     <div style="width:90%;margin: -2% 2% 2% 4%;box-shadow: 2px 2px 10px rgb(196, 196, 196);background-color: #fff;border-radius: 5px;position: relative;padding-bottom: 4%;">
         <h1 style="font-family: sans-serif;font-size: 30px;font-weight: bold;text-align: center;color:#265DE7;text-transform: uppercase;padding-top: 2%;">Company Z</h1>
@@ -470,7 +467,7 @@ export const checkResetLink = async (req, res) => {
     return res.status(200).send("Code is valid");
     
   } catch (err) {
-    res.status(500).send(ex.message);
+    res.status(500).send(err.message);
   }
 }
 
@@ -488,7 +485,7 @@ export const resetPassword = async (req, res) => {
     let salt = await bcrypt.genSalt(10);
     let newPassword = await bcrypt.hash(req.body.newPassword, salt);
 
-    await User.findByIdAndUpdate(
+    user = await User.findByIdAndUpdate(
       req.params.userId,
       {
         password: newPassword,
@@ -497,13 +494,15 @@ export const resetPassword = async (req, res) => {
       },
       { new: true }
     );
+    console.log("request",user.requestPasswordReset)
 
     res
       .status(200)
       .send({
         status: 200,
         success: true,
-        message: "Reset Password Successfully!"
+        message: "Reset Password Successfully!",
+        data: user
       });
   } catch (ex) {
     res.status(500).send(ex.message);
