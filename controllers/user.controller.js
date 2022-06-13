@@ -311,10 +311,11 @@ export const checkCanReset = async (req, res) => {
   try {
     let user = await User.findById(req.params.userId);
     if (!user) return res.status(404).send("User not found!");
-    console.log('reset', user)
     if (!user.requestPasswordReset) {
+      console.log('reset', user)
       return res.status(401).send({ status: 401, success: false, message: "You did not request password resetting", data: user })
     } else {
+      console.log('reset2',user)
       return res.status(200).send({
         status: 200,
         message: "ok",
