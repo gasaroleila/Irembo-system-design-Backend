@@ -24,11 +24,9 @@ export const uploadFiles = async (req,res) => {
 }
 
 
-export const getUserInformation = async (req, res) => {
+export const getUser = async (req, res) => {
   try {
-    let user = await User.findById(req.user._id).select(
-      "-Password -verificationCode -isVerified -PasswordResetLink -requestPasswordReset"
-    );
+    let user = await User.findById(req.params._id)
     if (!user) return res.status(404).send("User not found!");
     return res.send({
       status: 200,
@@ -209,15 +207,9 @@ export const sendLoginLink = async (req, res) => {
             },
             { new: true }
           );
-          console.log('login',user.loginLink)
           return res.status(200).send({
             message: `Sent the Login link to ${user.email}`,
-            data: {
-              message:
-                "Login link sent",
-              user: user,
-            },
-            status: "success"
+            success: true
           });
         }
         
@@ -229,7 +221,7 @@ export const sendLoginLink = async (req, res) => {
 
     res.send({
       status: 200,
-      message: "Check your Email for login link",
+      message: `Sent the Login link to ${user.email}`,
       success: true
     });
   } catch (ex) {
@@ -315,6 +307,26 @@ res.header("Authorization", token).send({
   }
 };
 
+export const checkCanReset = async (req, res) => {
+  try {
+    let user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).send("User not found!");
+    console.log('reset', user)
+    if (!user.requestPasswordReset) {
+      return res.status(401).send({ status: 401, success: false, message: "You did not request password resetting", data: user })
+    } else {
+      return res.status(200).send({
+        status: 200,
+        message: "ok",
+        data: user,
+        success: true
+      });
+    }
+  } catch (ex) {
+    return res.status(400).send(ex.message);
+  }
+};
+
 export const sendResetLink = async (req, res) => {
   try {
     if (!req.body.email) return res.status(400).send("Email is required");
@@ -367,20 +379,20 @@ export const sendResetLink = async (req, res) => {
       return res.status(200).send({
         message: `Sent the password reset code to ${user.email}`,
         data: {
+          success: true,
           message:
             "Reset link sent",
-          status: "success",
           userId: user._id.toString(),
         },
       });
     } else {
       return res.status(400).send({
-        message: "Unable to send the email for password reset",
-        status: "error"
+        message: "Unkown Email, Please register!",
+        success: false
       });
     }
   } catch (ex) {
-    res.status(400).send(ex.message);
+    res.status(500).send({ success: false, messaage: ex.message });
   }
 };
 
@@ -434,7 +446,11 @@ export const checkResetLink = async (req, res) => {
     if (!user)
       return res
         .status(400)
-        .send("Unable to find the user with the provided userId");    
+        .send("Unable to find the user with the provided userId");  
+    
+        if (!user.requestPasswordReset) {
+          return res.status(401).send({success: false, message: "You did not request password resetting"})
+        }
         if (
           user.passwordResetLink &&
           user.passwordResetLink.code != req.params.userCode
@@ -453,6 +469,8 @@ export const checkResetLink = async (req, res) => {
               "Link Expired!"
             );
         }
+
+        
     
        user =  await User.findByIdAndUpdate(
           user._id,
@@ -481,6 +499,10 @@ export const resetPassword = async (req, res) => {
       return res.status(400).send("Invalid password reset code");
     if (!user.requestPasswordReset)
       return res.status(400).send("You did not request password resetting");
+
+      const validPassword = await compare(req.body.oldPassword, user.password);
+      if (!validPassword)
+        return res.status(400).send({success: false, message: "Wrong Password!"});
 
     let salt = await bcrypt.genSalt(10);
     let newPassword = await bcrypt.hash(req.body.newPassword, salt);
