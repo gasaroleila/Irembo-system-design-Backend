@@ -24,11 +24,9 @@ export const uploadFiles = async (req,res) => {
 }
 
 
-export const getUserInformation = async (req, res) => {
+export const getUser = async (req, res) => {
   try {
-    let user = await User.findById(req.user._id).select(
-      "-Password -verificationCode -isVerified -PasswordResetLink -requestPasswordReset"
-    );
+    let user = await User.findById(req.params._id)
     if (!user) return res.status(404).send("User not found!");
     return res.send({
       status: 200,
@@ -88,7 +86,6 @@ export const createUser = async (req, res) => {
       const subject = "Company Z: Verify Your Email";
       const html = `<body>
             <div style="background-color: #FFF;width: 100%;height: 120px;">
-                <img src="https://res.cloudinary.com/pacis/image/upload/v1637909575/Component_42_1_agpyhx.png" style="width: 18%;margin-top: 0%;height: 70px;margin-left: 38%;">
             </div>
             <div style="width:90%;margin: -2% 2% 2% 4%;box-shadow: 2px 2px 10px rgb(196, 196, 196);background-color: #fff;border-radius: 5px;position: relative;padding-bottom: 4%;">
                 <h1 style="font-family: sans-serif;font-size: 30px;font-weight: bold;text-align: center;color:#265DE7;text-transform: uppercase;padding-top: 2%;">Company Z</h1>
@@ -186,7 +183,6 @@ export const sendLoginLink = async (req, res) => {
         const subject = "Company Z: Login Link";
         const html = `<body>
               <div style="background-color: #FFF;width: 100%;height: 120px;">
-                  <img src="https://res.cloudinary.com/pacis/image/upload/v1637909575/Component_42_1_agpyhx.png" style="width: 18%;margin-top: 0%;height: 70px;margin-left: 38%;">
               </div>
               <div style="width:90%;margin: -2% 2% 2% 4%;box-shadow: 2px 2px 10px rgb(196, 196, 196);background-color: #fff;border-radius: 5px;position: relative;padding-bottom: 4%;">
                   <h1 style="font-family: sans-serif;font-size: 30px;font-weight: bold;text-align: center;color:#265DE7;text-transform: uppercase;padding-top: 2%;">Company Z</h1>
@@ -211,15 +207,9 @@ export const sendLoginLink = async (req, res) => {
             },
             { new: true }
           );
-          console.log('login',user.loginLink)
           return res.status(200).send({
             message: `Sent the Login link to ${user.email}`,
-            data: {
-              message:
-                "Login link sent",
-              user: user,
-            },
-            status: "success"
+            success: true
           });
         }
         
@@ -231,7 +221,7 @@ export const sendLoginLink = async (req, res) => {
 
     res.send({
       status: 200,
-      message: "Check your Email for login link",
+      message: `Sent the Login link to ${user.email}`,
       success: true
     });
   } catch (ex) {
@@ -317,6 +307,26 @@ res.header("Authorization", token).send({
   }
 };
 
+export const checkCanReset = async (req, res) => {
+  try {
+    let user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).send("User not found!");
+    console.log('reset', user)
+    if (!user.requestPasswordReset) {
+      return res.status(401).send({ status: 401, success: false, message: "You did not request password resetting", data: user })
+    } else {
+      return res.status(200).send({
+        status: 200,
+        message: "ok",
+        data: user,
+        success: true
+      });
+    }
+  } catch (ex) {
+    return res.status(400).send(ex.message);
+  }
+};
+
 export const sendResetLink = async (req, res) => {
   try {
     if (!req.body.email) return res.status(400).send("Email is required");
@@ -342,7 +352,6 @@ export const sendResetLink = async (req, res) => {
     const subject = "Company Z: Reset your password";
     const html = `<body>
     <div style="background-color: #FFF;width: 100%;height: 120px;">
-        <img src="https://res.cloudinary.com/pacis/image/upload/v1637909575/Component_42_1_agpyhx.png" style="width: 18%;margin-top: 0%;height: 70px;margin-left: 38%;">
     </div>
     <div style="width:90%;margin: -2% 2% 2% 4%;box-shadow: 2px 2px 10px rgb(196, 196, 196);background-color: #fff;border-radius: 5px;position: relative;padding-bottom: 4%;">
         <h1 style="font-family: sans-serif;font-size: 30px;font-weight: bold;text-align: center;color:#265DE7;text-transform: uppercase;padding-top: 2%;">Company Z</h1>
@@ -370,20 +379,20 @@ export const sendResetLink = async (req, res) => {
       return res.status(200).send({
         message: `Sent the password reset code to ${user.email}`,
         data: {
+          success: true,
           message:
             "Reset link sent",
-          status: "success",
           userId: user._id.toString(),
         },
       });
     } else {
       return res.status(400).send({
-        message: "Unable to send the email for password reset",
-        status: "error"
+        message: "Unkown Email, Please register!",
+        success: false
       });
     }
   } catch (ex) {
-    res.status(400).send(ex.message);
+    res.status(500).send({ success: false, messaage: ex.message });
   }
 };
 
@@ -437,7 +446,11 @@ export const checkResetLink = async (req, res) => {
     if (!user)
       return res
         .status(400)
-        .send("Unable to find the user with the provided userId");    
+        .send("Unable to find the user with the provided userId");  
+    
+        if (!user.requestPasswordReset) {
+          return res.status(401).send({success: false, message: "You did not request password resetting"})
+        }
         if (
           user.passwordResetLink &&
           user.passwordResetLink.code != req.params.userCode
@@ -456,6 +469,8 @@ export const checkResetLink = async (req, res) => {
               "Link Expired!"
             );
         }
+
+        
     
        user =  await User.findByIdAndUpdate(
           user._id,
@@ -470,7 +485,7 @@ export const checkResetLink = async (req, res) => {
     return res.status(200).send("Code is valid");
     
   } catch (err) {
-    res.status(500).send(ex.message);
+    res.status(500).send(err.message);
   }
 }
 
@@ -485,10 +500,14 @@ export const resetPassword = async (req, res) => {
     if (!user.requestPasswordReset)
       return res.status(400).send("You did not request password resetting");
 
+      const validPassword = await compare(req.body.oldPassword, user.password);
+      if (!validPassword)
+        return res.status(400).send({success: false, message: "Wrong Password!"});
+
     let salt = await bcrypt.genSalt(10);
     let newPassword = await bcrypt.hash(req.body.newPassword, salt);
 
-    await User.findByIdAndUpdate(
+    user = await User.findByIdAndUpdate(
       req.params.userId,
       {
         password: newPassword,
@@ -497,13 +516,15 @@ export const resetPassword = async (req, res) => {
       },
       { new: true }
     );
+    console.log("request",user.requestPasswordReset)
 
     res
       .status(200)
       .send({
         status: 200,
         success: true,
-        message: "Reset Password Successfully!"
+        message: "Reset Password Successfully!",
+        data: user
       });
   } catch (ex) {
     res.status(500).send(ex.message);

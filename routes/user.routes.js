@@ -1,18 +1,18 @@
 import express from 'express'
 const router = express.Router()
-import { changePassword, checkCode, checkResetLink, createUser, deleteAccount, getUserInformation,loginWithLink, resetPassword,sendLoginLink,sendResetLink, updateUserInformation, uploadFiles, validateUserEmail, verifyAccount } from '../controllers/user.controller.js'
+import { changePassword, checkCanReset, checkCode, checkResetLink, createUser, deleteAccount,getUser,loginWithLink, resetPassword,sendLoginLink,sendResetLink, updateUserInformation, uploadFiles, validateUserEmail, verifyAccount } from '../controllers/user.controller.js'
 import authenticate from '../middlewares/auth.middleware.js';
 import { validateLogin, validatePasswordReset, validateProfileUpdate, validateUserRegistration } from '../validators/user.validator.js';
 import { uploadFile } from "../utils/fileUpload.utils.js";
 const upload = uploadFile()
 
-router.get("/user/profile", authenticate, getUserInformation)
+router.get("/user/profile", getUser)
+router.get("/checkCanReset/:userId", checkCanReset)
 
 router.post("/register", upload.single("profilePicture"), validateUserRegistration, createUser)
 
 router.patch("/updateInfo/:userId", upload.single("documentImage"), updateUserInformation)
 router.patch("/verifyAccount/:userId",verifyAccount)
-
 
 
 router.patch("/verifyEmail", validateUserEmail)
