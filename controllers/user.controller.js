@@ -192,7 +192,7 @@ export const sendLoginLink = async (req, res) => {
       randomCode = "CZ"+(Math.floor(2000 + Math.random() * 80000)).toString();
     }
 
-    let link = `https://irembo-system-design.vercel.app/login/${user._id}/${randomCode}`
+    let link = `${process.env.FRONTEND_URL}login/${user._id}/${randomCode}`
     
     
       try {
@@ -364,7 +364,7 @@ export const sendResetLink = async (req, res) => {
     }
 
     // let resetCode = Math.floor(10000 + Math.random() * 90000);
-    let resetLink = `https://irembo-system-design.vercel.app/resetPassword/${user._id}/${randomCode}`
+    let resetLink = `${process.env.FRONTEND_URL}resetPassword/${user._id}/${randomCode}`
     
     const subject = "Company Z: Reset your password";
     const html = `<body>
