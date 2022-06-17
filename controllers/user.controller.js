@@ -7,6 +7,22 @@ import bcrypt from "bcrypt";
 const { compare } = bcrypt;
 import cloudinary from "../utils/cloudinary.js";
 
+export const pyUploadFile = async (req, res) => {
+  console.log("req",req.data)
+  let docInfo = await cloudinary.uploader.upload(req.file.path)
+            let secure_url = docInfo.secure_url
+            let cloudinaryId = docInfo.public_id
+            
+  try {
+    if (req.file.path) {
+       console.log("Data Uploaded")
+     }
+  } catch (error) {
+      return res.json({message: "failed to upload property files", status: 500})
+  }
+
+}
+
 export const uploadFiles = async (req,res) => {
   let docInfo = await cloudinary.uploader.upload(req.file.path)
             let secure_url = docInfo.secure_url
@@ -176,7 +192,7 @@ export const sendLoginLink = async (req, res) => {
       randomCode = "CZ"+(Math.floor(2000 + Math.random() * 80000)).toString();
     }
 
-    let link = `http://localhost:3000/login/${user._id}/${randomCode}`
+    let link = `${process.env.FRONTEND_URL}login/${user._id}/${randomCode}`
     
     
       try {
@@ -348,7 +364,7 @@ export const sendResetLink = async (req, res) => {
     }
 
     // let resetCode = Math.floor(10000 + Math.random() * 90000);
-    let resetLink = `http://localhost:3000/resetPassword/${user._id}/${randomCode}`
+    let resetLink = `${process.env.FRONTEND_URL}resetPassword/${user._id}/${randomCode}`
     
     const subject = "Company Z: Reset your password";
     const html = `<body>
